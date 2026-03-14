@@ -1,4 +1,5 @@
 const express = require('express');
+<<<<<<< HEAD
 const Report = require('../models/Report');
 
 const router = express.Router();
@@ -30,32 +31,71 @@ const fetchCreatorData = (username) => {
     audienceActivity: Math.round(30 + pseudoRandom(5) * 70),
     interactionQuality: Math.round(25 + pseudoRandom(6) * 75),
     commentFrequency: Math.round(5 + pseudoRandom(7) * 40)
+=======
+
+const router = express.Router();
+
+// In-memory storage for reports
+let reports = [];
+
+// Mock function to fetch creator data
+const fetchCreatorData = (username) => {
+  // In real app, fetch from API
+  // For now, return mock data
+  const followers = Math.floor(Math.random() * 100000) + 1000;
+  const growthData = Array.from({length: 10}, () => Math.floor(Math.random() * 1000) + 100); // mock growth over 10 periods
+  return {
+    followers,
+    avgLikes: Math.floor(Math.random() * 1000) + 50,
+    avgComments: Math.floor(Math.random() * 100) + 5,
+    posts: Math.floor(Math.random() * 100) + 10,
+    growthData,
+    audienceActivity: Math.random() * 100, // 0-100
+    interactionQuality: Math.random() * 100,
+    commentFrequency: Math.random() * 50
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
   };
 };
 
 // Calculate engagement rate
 const calculateEngagementRate = (avgLikes, avgComments, followers) => {
+<<<<<<< HEAD
   if (!followers) return 0;
+=======
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
   return ((avgLikes + avgComments) / followers) * 100;
 };
 
 // Detect fake followers (simple heuristic)
 const detectFakeFollowers = (engagementRate, followers) => {
+<<<<<<< HEAD
   if (engagementRate < 1.2 && followers > 10000) {
     return Math.min(52 + (followers / 100000), 88);
   }
   const baseSuspicion = 45 - engagementRate * 4.4;
   const followerPenalty = followers > 500000 ? 4 : 0;
   return Math.min(90, Math.max(2, baseSuspicion + followerPenalty));
+=======
+  // Simple logic: if engagement < 1% and followers > 10k, suspect fake
+  if (engagementRate < 1 && followers > 10000) {
+    return Math.min(50 + (followers / 10000), 90); // up to 90%
+  }
+  return Math.max(0, 50 - engagementRate * 5);
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
 };
 
 // Authenticity score
 const calculateAuthenticityScore = (engagementRate, fakePercentage) => {
+<<<<<<< HEAD
   return Math.min(100, Math.max(0, 100 - fakePercentage + engagementRate * 1.4));
+=======
+  return Math.max(0, 100 - fakePercentage - (100 - engagementRate));
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
 };
 
 // Trust score
 const calculateTrustScore = (engagementRate, authenticityScore) => {
+<<<<<<< HEAD
   return Math.min(100, (engagementRate * 5 + authenticityScore * 2) / 7);
 };
 
@@ -97,27 +137,42 @@ const analyzeGrowthPattern = (growthData) => {
     spikeCount,
     averageChange: Number(avgChange.toFixed(2))
   };
+=======
+  return (engagementRate + authenticityScore) / 2;
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
 };
 
 // AI Generated Report
 const generateAIReport = (data) => {
+<<<<<<< HEAD
   return `Creator ${data.username} has ${data.followers} followers and ${data.engagementRate.toFixed(2)}% engagement. Fake followers are estimated at ${data.fakeFollowerPercentage.toFixed(2)}%, with authenticity at ${data.authenticityScore.toFixed(2)} and trust at ${data.trustScore.toFixed(2)}. Growth looks ${data.growthAnalysis.abnormal ? 'spiky' : 'steady'} and audience activity is ${data.audienceInsights.activityLevel > 50 ? 'healthy' : 'weak'}. Recommendations: ${data.recommendations.join('; ')}.`;
+=======
+  return `Creator ${data.username} has ${data.followers} followers with an engagement rate of ${data.engagementRate.toFixed(2)}%. 
+  Fake follower percentage is estimated at ${data.fakeFollowerPercentage.toFixed(2)}%, leading to an authenticity score of ${data.authenticityScore.toFixed(2)} and trust score of ${data.trustScore.toFixed(2)}. 
+  Growth pattern shows ${data.growthAnalysis.abnormal ? 'abnormal spikes' : 'steady growth'}. 
+  Audience activity is ${data.audienceInsights.activityLevel > 50 ? 'high' : 'low'}. 
+  Recommendations include ${data.recommendations.join(', ')}.`;
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
 };
 
 // Analyze creator
 router.post('/analyze', async (req, res) => {
   try {
     const { username } = req.body;
+<<<<<<< HEAD
     if (!username || !username.trim()) {
       return res.status(400).send({ error: 'Username is required' });
     }
 
     const cleanedUsername = username.trim().replace(/^@+/, '');
+=======
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
     const data = fetchCreatorData(username);
     const engagementRate = calculateEngagementRate(data.avgLikes, data.avgComments, data.followers);
     const fakePercentage = detectFakeFollowers(engagementRate, data.followers);
     const authenticityScore = calculateAuthenticityScore(engagementRate, fakePercentage);
     const trustScore = calculateTrustScore(engagementRate, authenticityScore);
+<<<<<<< HEAD
     const recommendations = getRecommendations(engagementRate, fakePercentage, data.audienceActivity);
     const growthAnalysis = analyzeGrowthPattern(data.growthData);
 
@@ -140,10 +195,21 @@ router.post('/analyze', async (req, res) => {
 
     const report = new Report({
       username: cleanedUsername,
+=======
+    const recommendations = getRecommendations(engagementRate, fakePercentage);
+    const growthAnalysis = analyzeGrowthPattern(data.growthData);
+
+    const aiReport = generateAIReport({username, followers: data.followers, engagementRate, fakeFollowerPercentage: fakePercentage, authenticityScore, trustScore, growthAnalysis, audienceInsights: {activityLevel: data.audienceActivity}, recommendations});
+
+    const report = {
+      id: reports.length + 1,
+      username,
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
       followers: data.followers,
       avgLikes: data.avgLikes,
       avgComments: data.avgComments,
       engagementRate,
+<<<<<<< HEAD
       fakeFollowerScore: fakePercentage,
       fakeFollowerPercentage: fakePercentage,
       authenticityScore,
@@ -153,12 +219,19 @@ router.post('/analyze', async (req, res) => {
       audienceActivityScore,
       recommendations,
       growthData: data.growthData,
+=======
+      fakeFollowerPercentage: fakePercentage,
+      authenticityScore,
+      trustScore,
+      recommendations,
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
       growthAnalysis,
       audienceInsights: {
         activityLevel: data.audienceActivity,
         interactionQuality: data.interactionQuality,
         commentFrequency: data.commentFrequency
       },
+<<<<<<< HEAD
       aiReport
     });
 
@@ -166,13 +239,26 @@ router.post('/analyze', async (req, res) => {
     res.send(report);
   } catch (e) {
     res.status(500).send({ error: 'Failed to analyze creator' });
+=======
+      aiReport,
+      createdAt: new Date()
+    };
+
+    reports.push(report);
+    res.send(report);
+  } catch (e) {
+    res.status(400).send(e);
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
   }
 });
 
 // Get reports
 router.get('/reports', async (req, res) => {
   try {
+<<<<<<< HEAD
     const reports = await Report.find().sort({ createdAt: -1 }).limit(100);
+=======
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
     res.send(reports);
   } catch (e) {
     res.status(500).send(e);
@@ -199,6 +285,7 @@ router.post('/compare', async (req, res) => {
     const trust2 = calculateTrustScore(eng2, auth2);
 
     res.send({
+<<<<<<< HEAD
       creator1: {
         username: username1,
         followers: data1.followers,
@@ -216,10 +303,18 @@ router.post('/compare', async (req, res) => {
         trustScore: trust2
       },
       betterMatch: auth1 >= auth2 ? 'creator1' : 'creator2'
+=======
+      creator1: { username: username1, engagementRate: eng1, fakeFollowers: fake1, authenticityScore: auth1, trustScore: trust1 },
+      creator2: { username: username2, engagementRate: eng2, fakeFollowers: fake2, authenticityScore: auth2, trustScore: trust2 }
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
     });
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
+<<<<<<< HEAD
 module.exports = router;
+=======
+module.exports = router;
+>>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
