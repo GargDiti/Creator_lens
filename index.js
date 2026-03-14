@@ -2,34 +2,37 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-<<<<<<< HEAD
+const fs = require('fs');
 const mongoose = require('mongoose');
 
 const analyzeRoutes = require('./routes/analyze');
 const authRoutes = require('./routes/auth');
-=======
-
-const analyzeRoutes = require('./routes/analyze');
->>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
 
 const app = express();
+const clientDistPath = path.join(__dirname, 'client', 'dist');
+const publicPath = path.join(__dirname, 'public');
+const staticPath = fs.existsSync(clientDistPath) ? clientDistPath : publicPath;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(staticPath));
 
 app.use('/api', analyzeRoutes);
-<<<<<<< HEAD
 app.use('/api/auth', authRoutes);
-=======
->>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(staticPath, 'index.html'));
+});
+
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+
+  res.sendFile(path.join(staticPath, 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
-<<<<<<< HEAD
 
 const startServer = async () => {
   try {
@@ -51,8 +54,3 @@ const startServer = async () => {
 };
 
 startServer();
-=======
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
->>>>>>> ca640d3ba53d0070f4220561d0d626d7b3cb0492
