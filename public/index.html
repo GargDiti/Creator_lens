@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake Follower Analyzer</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { max-width: 800px; margin: auto; }
+    input, button { padding: 10px; margin: 5px; }
+    .result { margin-top: 20px; border: 1px solid #ccc; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Fake Follower Analyzer</h1>
+    
+    <h2>Analyze Creator</h2>
+    <input type="text" id="username" placeholder="Enter creator username">
+    <button onclick="analyze()">Analyze</button>
+    
+    <div id="result" class="result" style="display:none;"></div>
+    
+    <h2>Compare Creators</h2>
+    <input type="text" id="username1" placeholder="Username 1">
+    <input type="text" id="username2" placeholder="Username 2">
+    <button onclick="compare()">Compare</button>
+    
+    <div id="compareResult" class="result" style="display:none;"></div>
+    
+    <h2>Saved Reports</h2>
+    <button onclick="getReports()">Load Reports</button>
+    <div id="reports" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000/api';
+
+    async function analyze() {
+      const username = document.getElementById('username').value;
+      const response = await fetch(`${API_BASE}/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      });
+      const data = await response.json();
+      displayResult(data);
+    }
+
+    function displayResult(data) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <h3>Report for ${data.username}</h3>
+        <p>Followers: ${data.followers}</p>
+        <p>Avg Likes: ${data.avgLikes}</p>
+        <p>Avg Comments: ${data.avgComments}</p>
+        <p>Engagement Rate: ${data.engagementRate.toFixed(2)}%</p>
+        <p>Fake Follower %: ${data.fakeFollowerPercentage.toFixed(2)}%</p>
+        <p>Authenticity Score: ${data.authenticityScore.toFixed(2)}</p>
+        <p>Trust Score: ${data.trustScore.toFixed(2)}</p>
+        <p>Growth Analysis: ${data.growthAnalysis.abnormal ? 'Abnormal growth detected' : 'Normal growth'} (Spikes: ${data.growthAnalysis.spikes}, Avg Growth: ${data.growthAnalysis.avgGrowth.toFixed(2)})</p>
+        <h4>Audience Insights:</h4>
+        <p>Activity Level: ${data.audienceInsights.activityLevel.toFixed(2)}</p>
+        <p>Interaction Quality: ${data.audienceInsights.interactionQuality.toFixed(2)}</p>
+        <p>Comment Frequency: ${data.audienceInsights.commentFrequency.toFixed(2)}</p>
+        <h4>AI Generated Report:</h4>
+        <p>${data.aiReport}</p>
+        <h4>Recommendations:</h4>
+        <ul>${data.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
+      `;
+      resultDiv.style.display = 'block';
+    }
+
+    async function compare() {
+      const username1 = document.getElementById('username1').value;
+      const username2 = document.getElementById('username2').value;
+      const response = await fetch(`${API_BASE}/compare`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username1, username2 })
+      });
+      const data = await response.json();
+      displayCompare(data);
+    }
+
+    function displayCompare(data) {
+      const resultDiv = document.getElementById('compareResult');
+      resultDiv.innerHTML = `
+        <h3>Comparison</h3>
+        <div style="display: flex; justify-content: space-between;">
+          <div>
+            <h4>${data.creator1.username}</h4>
+            <p>Engagement: ${data.creator1.engagementRate.toFixed(2)}%</p>
+            <p>Fake Followers: ${data.creator1.fakeFollowers.toFixed(2)}%</p>
+            <p>Authenticity: ${data.creator1.authenticityScore.toFixed(2)}</p>
+            <p>Trust: ${data.creator1.trustScore.toFixed(2)}</p>
+          </div>
+          <div>
+            <h4>${data.creator2.username}</h4>
+            <p>Engagement: ${data.creator2.engagementRate.toFixed(2)}%</p>
+            <p>Fake Followers: ${data.creator2.fakeFollowers.toFixed(2)}%</p>
+            <p>Authenticity: ${data.creator2.authenticityScore.toFixed(2)}</p>
+            <p>Trust: ${data.creator2.trustScore.toFixed(2)}</p>
+          </div>
+        </div>
+      `;
+      resultDiv.style.display = 'block';
+    }
+
+    async function getReports() {
+      const response = await fetch(`${API_BASE}/reports`);
+      const data = await response.json();
+      const reportsDiv = document.getElementById('reports');
+      reportsDiv.innerHTML = data.map(r => `
+        <div>
+          <h4>${r.username} - ${new Date(r.createdAt).toLocaleDateString()}</h4>
+          <p>Engagement: ${r.engagementRate.toFixed(2)}%, Fake: ${r.fakeFollowerPercentage.toFixed(2)}%</p>
+        </div>
+      `).join('');
+      reportsDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
