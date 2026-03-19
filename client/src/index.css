@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply transition-colors duration-200;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #e5e7eb;
+  background: radial-gradient(circle at 20% 0%, rgba(192, 132, 252, 0.5), transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.35), transparent 45%),
+    linear-gradient(135deg, #050713 0%, #050b16 50%, #0b0f21 100%);
+  background-attachment: fixed;
+}
+
+.cosmic-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.cosmic-bg::before,
+.cosmic-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.cosmic-bg::before {
+  background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.18), transparent 55%),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.12), transparent 55%),
+    radial-gradient(circle at 60% 70%, rgba(255, 255, 255, 0.12), transparent 55%);
+}
+
+.cosmic-bg::after {
+  background-image: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.03), transparent 30%),
+    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.02), transparent 40%),
+    radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.02), transparent 35%);
+  animation: star-flicker 10s ease-in-out infinite;
+}
+
+@keyframes star-flicker {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.4; }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* floating icon animation */
+@keyframes float-animation {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.floating-icon {
+  animation: float-animation 8s ease-in-out infinite;
+  opacity: 0.2;
+}
+
+/* logo hover glow */
+.logo-hover:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+}
+
+/* glassy buttons */
+.glass-button {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.glass-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255,255,255,0.6);
+}
+
+/* feature card */
+.feature-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s, opacity 0.5s;
+}
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+}
+
